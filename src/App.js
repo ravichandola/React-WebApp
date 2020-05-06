@@ -10,37 +10,37 @@ class App extends React.Component {
     super();
     this.state = {
       products: [],
-      loading: true
+      loading: true,
     };
   }
 
   componentDidMount() {
-    firebase
-      .firestore()
-      .collection("products")
-      .get()
-      .then(snapshot => {
-        const products = snapshot.docs.map(doc => {
-          const data = doc.data();
-          data["id"] = doc.id;
-          return data;
-        });
-        this.setState({ products: products, loading: false });
-      });
+    // firebase
+    //   .firestore()
+    //   .collection("products")
+    //   .get()
+    //   .then(snapshot => {
+    //     const products = snapshot.docs.map(doc => {
+    //       const data = doc.data();
+    //       data["id"] = doc.id;
+    //       return data;
+    //     });
+    //     this.setState({ products: products, loading: false });
+    //   });
   }
 
-  handleIncreaseQuantity = product => {
+  handleIncreaseQuantity = (product) => {
     const { products } = this.state;
     const index = products.indexOf(product);
 
     products[index].qty += 1;
 
     this.setState({
-      products
+      products,
     });
   };
 
-  handleDecreaseQuantity = product => {
+  handleDecreaseQuantity = (product) => {
     const { products } = this.state;
     const index = products.indexOf(product);
 
@@ -50,17 +50,17 @@ class App extends React.Component {
     products[index].qty -= 1;
 
     this.setState({
-      products
+      products,
     });
   };
 
-  handleDeleteProduct = id => {
+  handleDeleteProduct = (id) => {
     const { products } = this.state;
 
-    const items = products.filter(product => product.id !== id);
+    const items = products.filter((product) => product.id !== id);
 
     this.setState({
-      products: items
+      products: items,
     });
   };
 
@@ -68,7 +68,7 @@ class App extends React.Component {
     const { products } = this.state;
     let count = 0;
 
-    products.forEach(product => {
+    products.forEach((product) => {
       count += product.qty;
     });
 
@@ -79,7 +79,7 @@ class App extends React.Component {
     const { products } = this.state;
     let cartTotal = 0;
 
-    products.map(product => {
+    products.map((product) => {
       if (product.qty > 0) {
         cartTotal = cartTotal + product.qty * product.price;
       }
