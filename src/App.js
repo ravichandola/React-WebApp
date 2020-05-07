@@ -12,6 +12,7 @@ class App extends React.Component {
       products: [],
       loading: true,
     };
+    this.db = firebase.firestore();
   }
 
   componentDidMount() {
@@ -28,17 +29,14 @@ class App extends React.Component {
     //     this.setState({ products: products, loading: false });
     //   });
 
-    firebase
-      .firestore()
-      .collection("products")
-      .onSnapshot((snapshot) => {
-        const products = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          data["id"] = doc.id;
-          return data;
-        });
-        this.setState({ products: products, loading: false });
+    this.db.collection("products").onSnapshot((snapshot) => {
+      const products = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        data["id"] = doc.id;
+        return data;
       });
+      this.setState({ products: products, loading: false });
+    });
   }
 
   handleIncreaseQuantity = (product) => {
@@ -101,11 +99,32 @@ class App extends React.Component {
     return cartTotal;
   };
 
+  addProduct = () => {
+    this.db
+      .collection("products")
+      .add({
+        img:
+          "https://images-na.ssl-images-amazon.com/images/I/81VUPiJU26L._SL1500_.jpg",
+        price: 10999,
+        qty: 3,
+        title: "Washing Machine",
+      })
+      .then((docRef) => {
+        console.log("product has been added to your cart", docRef);
+      })
+      .catch((error) => {
+        console.log("Error : ", error);
+      });
+  };
+
   render() {
     const { products, loading } = this.state;
     return (
       <div className="App">
         <Navbar count={this.getcountOfCartItems()} />
+        <button onClick={this.addProduct} style={{ padding: 20, fontSize: 20 }}>
+          Add a Product
+        </button>
         <Cart
           onIncreaseQuantity={this.handleIncreaseQuantity}
           onDecreaseQuantity={this.handleDecreaseQuantity}
